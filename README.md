@@ -1,2 +1,1 @@
-# PHZ1140C
-Computational Physics Laboratory
+# Computational Physics Laboratory
