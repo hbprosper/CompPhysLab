@@ -81,11 +81,11 @@ The environment need be created only once, but you must activate it whenever you
 Make sure you have activated the __comphys__ environment. Then execute the commands below in the order given. 
 ```bash
   conda install -c conda-forge numpy
-	conda install –c conda-forge matplotlib
+  conda install –c conda-forge matplotlib
   conda install -c conda-forge vpython
   conda install -c conda-forge sympy
   conda install -c conda-forge scipy
-	conda install –c conda-forge pandas
+  conda install –c conda-forge pandas
   conda install -c conda-forge iminuit
 ```
 If all goes well, these commands will have installed the Python modules numpy, matplotlib, vpython, etc. The command that installs vpython also installs __jupyterlab__, which includes jupyter notebook. However, verify this by looking at the printout to the screen. The main tool we'll use in the course is the jupyter notebook.
