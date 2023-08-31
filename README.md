@@ -19,6 +19,7 @@ modules, all open source, which are compatible with all well-known [operating sy
 The following modules are also of interest.
 
 | __modules__   | __description__     |
+| :---          | :---        |
 | scikit-learn  | easy to use machine learning toolkit |
 | pytorch       | a powerful, flexible, machine learning toolkit |
 | imageio       | photo-quality image display module |
