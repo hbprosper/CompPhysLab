@@ -23,6 +23,7 @@ The following modules are also of interest.
 | scikit-learn  | easy to use machine learning toolkit |
 | pytorch       | a powerful, flexible, machine learning toolkit |
 | imageio       | photo-quality image display module |
+| ffmpeg        | video conversion and streaming |
 | emcee         | an Markov Chain Monte Carlo module |
 | tqdm          | progress bar |
 | joblib        | module to save and load Python object |
