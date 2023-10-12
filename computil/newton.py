@@ -4,6 +4,41 @@
 # ----------------------------------------------------------------------
 import os, sys
 import numpy as np
+
+import matplotlib as mp
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+from computil.graphics import plot_central_axes
+
+# We'll use this to read in the planetary data, which are in CSV files.
+import pandas as pd
+
+# update fonts
+FONTSIZE = 12
+font = {'family' : 'sans-serif',
+        'weight' : 'normal',
+        'size'   : FONTSIZE}
+mp.rc('font', **font)
+
+# use latex if available on system, otherwise set usetex=False
+mp.rc('text', usetex=True)
+
+# use JavaScript for rendering animations
+mp.rc('animation', html='jshtml')
+# ----------------------------------------------------------------------
+DAY  = 24*3600.0           # Seconds per Earth day
+YEAR = 365.25*DAY          # Seconds per Earth year
+
+Msun = 1.98850e30          # Mass of Sun (kg)
+Mmer = 0.33010e24          # Mass of Mercury (kg)
+Mven = 4.86730e24          # Mass of Venus (kg)
+Mear = 5.97220e24          # Mass of Earth (kg)
+Mmar = 0.64169e24          # Mass of Mars (kg)
+Mjup = 1898.13e24          # Mass of Jupiter (kg)
+AU   = 1.495979e+11        # Astronomical unit (m)
+G    = 6.674080e-11        # Gravitational constant (m^3 /kg /s^2)
+DEG2RAD  = np.pi / 180     # convert angles to radians
 # ----------------------------------------------------------------------
 # The following functions can operate on an array of vectors
 # ----------------------------------------------------------------------
@@ -68,7 +103,7 @@ def compute_grav_forces1(m, r):
 # compute the net gravitational force on each object, this time using 
 # the numpy broadcasting mechanism. 
 # ----------------------------------------------------------------------
-def compute_grav_forces2(m, r):
+def compute_grav_forces(m, r):
     
     # initial shapes of arrays m (masses) and r (position vectors)
     # m.shape: (n, )
@@ -118,3 +153,38 @@ def compute_grav_forces2(m, r):
     fnet = mi * gi # shape: (n, 3)
     
     return fnet
+# ----------------------------------------------------------------------
+def plot_planet_positions(x, y, colors, text, 
+                          filename='planets.png',
+                          xmin=-2, xmax=2, ymin=-2, ymax=2, 
+                          fgsize=(5,5), ftsize=16):
+    
+    # set size of figure
+    fig = plt.figure(figsize=fgsize)
+
+    # create area for a single plot 
+    nrows, ncols, index = 1, 1, 1
+    ax  = plt.subplot(nrows, ncols, index)
+
+    ax.set_title('Inner Solar System on 2024-09-22', pad=14)
+    
+    # place axes at the center of the plot
+    nxticks = nyticks = 9
+    xlabel  = '$x$ (au)'
+    ylabel  = '$y$ (au)'
+    plot_central_axes(ax, 
+                      xmin, xmax, nxticks, xlabel,
+                      ymin, ymax, nyticks, ylabel, 
+                      ftsize)
+    
+    ax.scatter(x, y, s=50, c=colors)
+    
+    for X, Y, T in zip(x, y, text):
+        X += 0.1
+        Y += 0.1
+        ax.text(X, Y, T)
+    
+    fig.tight_layout()
+    
+    plt.savefig(filename)
+# ----------------------------------------------------------------------    
