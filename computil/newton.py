@@ -11,9 +11,6 @@ from matplotlib.animation import FuncAnimation
 
 from computil.graphics import plot_central_axes
 
-# We'll use this to read in the planetary data, which are in CSV files.
-import pandas as pd
-
 # update fonts
 FONTSIZE = 12
 font = {'family' : 'sans-serif',
@@ -27,18 +24,25 @@ mp.rc('text', usetex=True)
 # use JavaScript for rendering animations
 mp.rc('animation', html='jshtml')
 # ----------------------------------------------------------------------
-DAY  = 24*3600.0           # Seconds per Earth day
-YEAR = 365.25*DAY          # Seconds per Earth year
+# CONSTANTS
+# ----------------------------------------------------------------------
+Msun     = 1.98850e30          # Mass of Sun (kg)
+Mmercury = 0.33010e24          # Mass of Mercury (kg)
+Mvenus   = 4.86730e24          # Mass of Venus (kg)
+Mearth   = 5.97220e24          # Mass of Earth (kg)
+Mmars    = 0.64169e24          # Mass of Mars (kg)
+Mjupiter = 1898.13e24          # Mass of Jupiter (kg)
 
-Msun = 1.98850e30          # Mass of Sun (kg)
-Mmer = 0.33010e24          # Mass of Mercury (kg)
-Mven = 4.86730e24          # Mass of Venus (kg)
-Mear = 5.97220e24          # Mass of Earth (kg)
-Mmar = 0.64169e24          # Mass of Mars (kg)
-Mjup = 1898.13e24          # Mass of Jupiter (kg)
-AU   = 1.495979e+11        # Astronomical unit (m)
-G    = 6.674080e-11        # Gravitational constant (m^3 /kg /s^2)
-DEG2RAD  = np.pi / 180     # convert angles to radians
+G = 6.674080e-11               # Gravitational constant (m^3 /kg /s^2)
+
+# Conversion factors
+DAY2SECS = 24*3600.0          # Seconds per Earth day
+YEAR2SECS= 365.25*DAY2SECS    # Seconds per Earth year
+AU2METERS= 1.495979e+11       # Astronomical unit (m)
+DEG2RAD  = np.pi / 180        # need to convert angles to radians
+DAY = DAY2SECS
+YEAR= YEAR2SECS
+AU  = AU2METERS
 # ----------------------------------------------------------------------
 # The following functions can operate on an array of vectors
 # ----------------------------------------------------------------------
@@ -142,11 +146,11 @@ def compute_grav_forces(m, r):
     mj = m[:, np.newaxis, np.newaxis]  # change shape from (n, ) to (n, 1, 1)
 
     # for each particle, compute all gravitational fields
-    gi = mj * rij / magrij**3         # shape of f: (n, n, 3)
+    gi = -G * mj * rij / magrij**3     # shape of f: (n, n, 3)
     
     # compute net gravitational fields by summing the fields along axis 0, that is,
     # "vertically".
-    gi = -G * gi.sum(axis=0)
+    gi = gi.sum(axis=0)
     
     # compute the net force acting on each particle 
     mi = m[:, np.newaxis]
@@ -154,8 +158,63 @@ def compute_grav_forces(m, r):
     
     return fnet
 # ----------------------------------------------------------------------
+class Solver:
+    '''
+    
+    solver = Solver(forces, m, h)
+    
+    N = 1000
+    orbits = [r0]                              # positions at t = 0 (i = 0)
+    orbits.append( solver.compute(r0, v0) )    # positions at t = h (i = 1)
+    
+    for i in range(1, N-1):
+        orbit = orbits.append( solver.compute(orbits[i]) ) # positions at t = (i + 1) * h
+        
+    orbits = np.array(orbits)
+    '''
+    def __init__(self, forces, m, h):
+        
+        self.forces = forces  # function to compute net forces
+        self.m  = m           # masses 
+        self.h  = h           # time step
+        self.hh = h**2
+        
+    def compute(self, r, v=None):
+        
+        h, hh, m, forces = self.h, self.hh, self.m, self.forces
+    
+        if v is not None:
+            
+            # use less precise formula at t = 0
+            
+            # compute the net forces at positions r
+            F  = forces(m, r)
+            
+            # broadcast the mass over the vector components (see description below)
+            Fm = F / m[:, np.newaxis]
+            
+            rnew= r + v * h + Fm * hh /  2   # O(h^3) accuracy
+            
+            self.r_prev = r  # needed in O(h^4) formula
+            
+        else:
+            
+            # use more precise formula
+            
+            # compute the net forces
+            F   = forces(m, r)
+            
+            Fm  = F / m[:, np.newaxis]
+            
+            rnew= 2 * r - self.r_prev + Fm * hh 
+         
+            self.r_prev = r  # cache current positions
+        
+        return rnew
+# ----------------------------------------------------------------------    
 def plot_planet_positions(x, y, colors, text, 
-                          filename='planets.png',
+                          filename='planets.png', 
+                          title='Inner Solar System',
                           xmin=-2, xmax=2, ymin=-2, ymax=2, 
                           fgsize=(5,5), ftsize=16):
     
@@ -166,7 +225,7 @@ def plot_planet_positions(x, y, colors, text,
     nrows, ncols, index = 1, 1, 1
     ax  = plt.subplot(nrows, ncols, index)
 
-    ax.set_title('Inner Solar System on 2024-09-22', pad=14)
+    ax.set_title(title, pad=14)
     
     # place axes at the center of the plot
     nxticks = nyticks = 9

@@ -4,9 +4,6 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-# We'll use this to read in the planetary data, which are in CSV files.
-import pandas as pd
-
 # update fonts
 FONTSIZE = 12
 font = {'family' : 'sans-serif',
