@@ -52,9 +52,13 @@ def magnitude(v):
 
 # compute unit vectors from one or more vectors
 def norm(v):
-    magv = magnitude(v)
-    magv = np.where(magv < 1.e-10, 1, magv) # handle zero-length vectors
-    return v / magv[:, np.newaxis]
+    magv = np.sqrt(np.sum(v*v, axis=-1))
+    magv = np.where(magv < 1.e-15, 1, magv) # handle zero-length vectors
+    try: 
+        u = v / magv[:, np.newaxis]
+    except:
+        u = v / magv
+    return u
 # ----------------------------------------------------------------------
 # Given the masses `m` and positions `r` of the objects (planets, etc.), 
 # compute the net gravitational force on each object by performing the 
