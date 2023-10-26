@@ -41,7 +41,7 @@ def dot(a, b):
 def tangent(u, n):
     '''
     Given the incident unit vector u and normal unit vector n, return the unit 
-    vector n x u x n / |u x n| that is at right angles to n and lies 
+    vector n x u x n / |u x n| that is at right angles to n and it lies 
     in the plane defined by u and n.
     
     nt = tangent(u, n)
@@ -64,7 +64,7 @@ def reflection(u, n):
     '''
     udotn = dot(u, n)
     try:
-        udotn = udotn[:, np.newaxis]
+        udotn = udotn[:, np.newaxis] # why do we try this?
     except:
         pass
     return u - 2*udotn*n
@@ -81,6 +81,7 @@ def transmission(u, n, n1, n2):
     n: a vector of array of vectors
     '''
     
+    # n x u x n
     nun   = np.cross(n, np.cross(u, n))
     
     udotn = dot(u, n)
@@ -89,7 +90,7 @@ def transmission(u, n, n1, n2):
     scale = np.sign(udotn)*np.sqrt(1-n12**2*(1-udotn**2))
     
     try:
-        scale = scale[:, np.newaxis]
+        scale = scale[:, np.newaxis] # again, why try this?
         n12 = n12[:, np.newaxis]
     except:
         pass
