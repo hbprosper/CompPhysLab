@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 from computil.graphics import plot_central_axes
+from computil.vectors import magnitude, norm
 
 # update fonts
 FONTSIZE = 12
@@ -43,22 +44,6 @@ DEG2RAD  = np.pi / 180        # need to convert angles to radians
 DAY = DAY2SECS
 YEAR= YEAR2SECS
 AU  = AU2METERS
-# ----------------------------------------------------------------------
-# The following functions can operate on an array of vectors
-# ----------------------------------------------------------------------
-# compute magnitudes of one or more vectors
-def magnitude(v):
-    return np.sqrt(np.sum(v*v, axis=-1))
-
-# compute unit vectors from one or more vectors
-def norm(v):
-    magv = np.sqrt(np.sum(v*v, axis=-1))
-    magv = np.where(magv < 1.e-15, 1, magv) # handle zero-length vectors
-    try: 
-        u = v / magv[:, np.newaxis]
-    except:
-        u = v / magv
-    return u
 # ----------------------------------------------------------------------
 # Given the masses `m` and positions `r` of the objects (planets, etc.), 
 # compute the net gravitational force on each object by performing the 
