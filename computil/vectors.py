@@ -91,8 +91,12 @@ def transmission(u, n, n1, n2):
     
     try:
         scale = scale[:, np.newaxis] # again, why try this?
-        n12 = n12[:, np.newaxis]
     except:
         pass
  
+    try:
+        n12 = n12[:, np.newaxis]
+    except:
+        pass
+    
     return scale * n + n12 * nun
