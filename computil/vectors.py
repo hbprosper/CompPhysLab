@@ -100,3 +100,46 @@ def transmission(u, n, n1, n2):
         pass
     
     return scale * n + n12 * nun
+
+def line_sphere_intersect(c, u, a):
+    '''
+    
+    p1, p2 = line_sphere_intersect(c, ui, a)
+    
+    Arguments
+    ---------
+    c :   a point on the incident ray (a vector, or array of vectors)
+    u :   a unit vector that defines the direction of the ray (a vector, or array of vectors)
+    a :   the radius of the circle
+    
+    Return
+    ------
+    p1, p2 : p1 and p2 are the intersection points, with p1 the closer of the two points
+    
+    '''
+    
+    cc = dot(c, c)
+    uc = dot(u, c)
+    
+    try:
+        uc = uc[:, np.newaxis]
+        cc = cc[:, np.newaxis]
+    except:
+        pass
+    
+    # solutions for lambda
+    try:
+        q  = np.sqrt(uc**2 - cc + a**2)
+    except:
+        return None, None
+    
+    l1 =-uc + q
+    l2 =-uc - q
+    
+    lmin = np.where(l1 < l2, l1, l2)
+    r1 = lmin * u + c
+    
+    lmax = np.where(l1 < l2, l2, l1)
+    r2 = lmax * u + c
+    
+    return r1, r2
