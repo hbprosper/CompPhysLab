@@ -87,7 +87,13 @@ def transmission(u, n, n1, n2):
     udotn = dot(u, n)
     
     n12   = n1/n2
-    scale = np.sign(udotn)*np.sqrt(1-n12**2*(1-udotn**2))
+    
+    q = 1-n12**2*(1-udotn**2)
+    
+    # protect against negative values.
+    q = np.sqrt(np.where(q < 0, 0, q))
+    
+    scale = np.sign(udotn) * q
     
     try:
         scale = scale[:, np.newaxis] # again, why try this?
@@ -101,25 +107,27 @@ def transmission(u, n, n1, n2):
     
     return scale * n + n12 * nun
 
-def line_sphere_intersect(c, u, a):
+def line_sphere_intersect(c, u, a, o):
     '''
     
-    p1, p2 = line_sphere_intersect(c, ui, a)
+    p1, p2, crosses = line_sphere_intersect(c, ui, a, o)
     
     Arguments
     ---------
     c :   a point on the incident ray (a vector, or array of vectors)
     u :   a unit vector that defines the direction of the ray (a vector, or array of vectors)
-    a :   the radius of the circle
+    a :   the radius of the sphere
+    o :   location of center of curvature of sphere
     
     Return
     ------
-    p1, p2 : p1 and p2 are the intersection points, with p1 the closer of the two points
+    p1, p2, crosses : p1 and p2 are the intersection points, with p1 the closer of the two points to
+    point c and crosses are an array of booleans. If True, the line crosses the sphere.
     
     '''
-    
-    cc = dot(c, c)
-    uc = dot(u, c)
+    C  = c - o
+    cc = dot(C, C)
+    uc = dot(u, C)
     
     try:
         uc = uc[:, np.newaxis]
@@ -128,10 +136,12 @@ def line_sphere_intersect(c, u, a):
         pass
     
     # solutions for lambda
-    try:
-        q  = np.sqrt(uc**2 - cc + a**2)
-    except:
-        return None, None
+    s = uc**2 - cc + a**2
+    
+    # check for valid solutions
+    crosses = s > 0
+
+    q  = np.sqrt(np.where(s < 0, 0, s))
     
     l1 =-uc + q
     l2 =-uc - q
@@ -142,4 +152,4 @@ def line_sphere_intersect(c, u, a):
     lmax = np.where(l1 < l2, l2, l1)
     r2 = lmax * u + c
     
-    return r1, r2
+    return r1, r2, crosses
