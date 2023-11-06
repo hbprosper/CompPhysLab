@@ -9,10 +9,18 @@ import numpy as np
 # ----------------------------------------------------------------------
 # compute magnitudes of one or more vectors
 def magnitude(v):
+    '''
+    Compute magnitude of a vector (modeled as numpy array) or an numpy
+    array of vectors.
+    '''
     return np.sqrt(np.sum(v*v, axis=-1))
 
 # compute unit vectors from one or more vectors
 def norm(v):
+    '''
+    Compute the normalized vectors, that is, unit vectors given one or
+    more vectors v.
+    '''
     magv = np.sqrt(np.sum(v*v, axis=-1))
     magv = np.where(magv < 1.e-15, 1, magv) # handle zero-length vectors
     try: 
@@ -24,13 +32,25 @@ def norm(v):
 def dot(a, b):
     '''
     
-    Return the dot product of vectors a and b or an array of vectors a and b, where
+    Compute the dot product of vectors a and b or an array of vectors a and b, where
     the vectors are modeled as numpy arrays.
+    
+    Arguments
+    ---------
+    
+    a: a vector or array of vectors
+    b: a vector (modeled as a numpy array) or an numpy array of vectors
+    
+    Return
+    ------
+    
+    ab: dot product
+    
+    Example
+    -------
     
     ab = dot(a, b)
     
-    a: a vector or array of vectors
-    b: a  
     '''
     try:
         c = (a*b).sum(axis=1)
@@ -41,26 +61,47 @@ def dot(a, b):
 def tangent(u, n):
     '''
     Given the incident unit vector u and normal unit vector n, return the unit 
-    vector n x u x n / |u x n| that is at right angles to n and it lies 
+    vector n x u x n / |u x n| that is at right angles to n and which lies 
     in the plane defined by u and n.
     
-    nt = tangent(u, n)
+    Arguments
+    ---------
+    u:    unit vector in direction of incident a ray (or an numpy array of unit vectors)
+    n:    unit normal to boundary (or an numpy array of unit normals)
     
-    u: a vector or array of vectors
-    n: a vector of array of vectors
+    Return
+    ------
+    nt:   unit vector in direction of tangent to normal (or a numpy array thereof)
+    
+    Example
+    -------
+    
+    nt = tangent(u, n)
+
     '''
     return norm(np.cross(n, np.cross(u, n)))
 
 def reflection(u, n):
     '''
-    Given the incident unit vector u and normal unit vector n that defines the orientation
-    of the boundary between two media, return the unit vector corresponding to a reflection 
-    at the boundary. 
+    
+    Given the incident unit vector u, normal unit vector n that defines the orientation
+    of the boundary between two media, return the unit vector in the direction of
+    the reflected ray  
+    
+    Arguments
+    ---------
+    u:    unit vector in direction of incident a ray (or an numpy array of unit vectors)
+    n:    unit normal to boundary (or an numpy array of unit normals)
+    
+    Return
+    ------
+    ur:   unit vector in direction of reflected ray (or a numpy array thereof)
+    
+    Example
+    -------
     
     ur = reflection(u, n)
-    
-    u: a vector or array of vectors
-    n: a vector of array of vectors
+
     '''
     udotn = dot(u, n)
     try:
@@ -73,12 +114,24 @@ def transmission(u, n, n1, n2):
     '''
     Given the incident unit vector u, normal unit vector n that defines the orientation
     of the boundary between two media of refractive indices n1 and n2, 
-    return the unit vector corresponding to a transmission at the boundary.  
+    return the unit vector in the direction of the transmitted ray.  
+    
+    Arguments
+    ---------
+    u:    unit vector in direction of incident ray (or an numpy array of unit vectors)
+    n:    unit normal to boundary (or an numpy array of unit normals)
+    n1:   refractive index of medium traversed by incident ray
+    n2:   refractive index of medium traversed by transmitted (i.e., refracted) ray
+    
+    Return
+    ------
+    ut:   unit vector in direction of transmitted ray (or a numpy array thereof)
+    
+    Example
+    -------
     
     ut = transmission(u, n, n1, n2)
     
-    u: a vector or array of vectors
-    n: a vector of array of vectors
     '''
     
     # n x u x n
@@ -110,19 +163,25 @@ def transmission(u, n, n1, n2):
 def line_sphere_intersect(c, u, a, o):
     '''
     
-    p1, p2, crosses = line_sphere_intersect(c, ui, a, o)
+    Given a line defined by the point c and unit vector u, compute the points of intersection
+    with a sphere or radius a located at point o.
     
     Arguments
     ---------
-    c :   a point on the incident ray (a vector, or array of vectors)
-    u :   a unit vector that defines the direction of the ray (a vector, or array of vectors)
+    c :   a point on the incident ray (or a numpy array of vectors)
+    u :   a unit vector in the direction of the incident ray (or a numpy array of vectors)
     a :   the radius of the sphere
-    o :   location of center of curvature of sphere
+    o :   the location of center of the sphere (i.e., the center of curvature)
     
     Return
     ------
     p1, p2, crosses : p1 and p2 are the intersection points, with p1 the closer of the two points to
     point c and crosses are an array of booleans. If True, the line crosses the sphere.
+    
+    Example
+    -------
+    
+    p1, p2, crosses = line_sphere_intersect(C, U, R, O)
     
     '''
     C  = c - o
