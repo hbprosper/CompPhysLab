@@ -164,7 +164,7 @@ def line_sphere_intersect(c, u, a, o):
     '''
     
     Given a line defined by the point c and unit vector u, compute the points of intersection
-    with a sphere or radius a located at point o.
+    with a sphere of radius a located at point o.
     
     Arguments
     ---------
