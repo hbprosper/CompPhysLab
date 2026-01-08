@@ -9,8 +9,8 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from computil.graphics import plot_central_axes
-from computil.vectors import magnitude, norm
+from comphyslab.graphics import plot_central_axes
+from comphyslab.vectors import magnitude, norm
 
 # update fonts
 FONTSIZE = 12
@@ -20,7 +20,10 @@ font = {'family' : 'sans-serif',
 mp.rc('font', **font)
 
 # use latex if available on system, otherwise set usetex=False
-mp.rc('text', usetex=True)
+# module for shell utilities
+import shutil
+
+mp.rc('text', usetex=shutil.which('latex') is not None)
 
 # use JavaScript for rendering animations
 mp.rc('animation', html='jshtml')
@@ -106,42 +109,43 @@ def compute_grav_forces(m, r):
     rj = r[:, np.newaxis]    # change shape from (n, 3) to (n, 1, 3)
     
     # compute all possible vector differences using broadcasting:
-    # 1. the row (1, n, 3) with n columns, each element of which 
+    # 1. The row (1, n, 3) with n columns, each element of which 
     #    is a 3-vector, is replicated vertically n times to form 
     #    an array of shape (n, n, 3)
     #
-    # 2. the column (n, 1, 3) with n rows, each element of which 
+    # 2. The column (n, 1, 3) with n rows, each element of which 
     #    is a 3-vector, is replicated horizontally n times to form
     #    an array of shape (n, n, 3).
     #
-    # 3. now that we have arrays of the same shape, we can perform 
+    # 3. Now that we have arrays of the same shape, we can perform 
     #    element-by-element subtractions.
     #
-    # note: the vectors along the diagonal are all zero-length vectors (see above)
+    # Note: the vectors along the diagonal are all zero-length vectors 
+    # (see above)
     rij= ri - rj            # shape: (n, n, 3)
     
     # magrij has shape (n, n) 
     magrij = magnitude(rij)
     
-    # for the magnitudes, replace the zeros along the diagonal
-    # with ones. why must we do this in this function but not
+    # For the magnitudes, replace the zeros along the diagonal
+    # with ones. Why must we do this in this function but not
     # in compute_forces1?
     np.fill_diagonal(magrij, 1)
         
-    # why must we change the shape of the magnitudes array?
+    # Why must we change the shape of the magnitudes array?
     magrij = magrij[:, :, np.newaxis]  # change shape to (n, n, 1)
     
-    # why must we change the shape of the mass array?
-    mj = m[:, np.newaxis, np.newaxis]  # change shape from (n, ) to (n, 1, 1)
+    # Why must we change the shape of the mass array?
+    mj = m[:, np.newaxis, np.newaxis]  # change shape from (n,) to (n,1,1)
 
-    # for each particle, compute all gravitational fields
+    # For each particle, compute all gravitational fields
     gi = -G * mj * rij / magrij**3     # shape of f: (n, n, 3)
     
-    # compute net gravitational fields by summing the fields along axis 0, that is,
-    # "vertically".
+    # Compute net gravitational fields by summing the fields along 
+    # axis 0, that is, "vertically".
     gi = gi.sum(axis=0)
     
-    # compute the net force acting on each particle 
+    # Compute the net force acting on each particle 
     mi = m[:, np.newaxis]
     fnet = mi * gi # shape: (n, 3)
     
@@ -153,11 +157,12 @@ class Solver:
     solver = Solver(forces, m, h)
     
     N = 1000
-    orbits = [r0]                              # positions at t = 0 (i = 0)
-    orbits.append( solver.compute(r0, v0) )    # positions at t = h (i = 1)
+    orbits = [r0]                            # positions at t = 0 (i = 0)
+    orbits.append( solver.compute(r0, v0) )  # positions at t = h (i = 1)
     
     for i in range(1, N-1):
-        orbit = orbits.append( solver.compute(orbits[i]) ) # positions at t = (i + 1) * h
+        orbit = orbits.append( solver.compute(orbits[i]) ) 
+	# positions at t = (i + 1) * h
         
     orbits = np.array(orbits)
     '''
@@ -179,18 +184,19 @@ class Solver:
             # compute the net forces at positions r
             F  = forces(m, r)
             
-            # broadcast the mass over the vector components (see description below)
+            # broadcast the mass over the vector components 
+	    # (see description below)
             Fm = F / m[:, np.newaxis]
             
-            rnew= r + v * h + Fm * hh /  2   # O(h^3) accuracy
+            rnew = r + v * h + Fm * hh /  2   # O(h^3) accuracy
             
             self.r_prev = r  # needed in O(h^4) formula
             
         else:
             
-            # use more precise formula
+            # Use more precise formula
             
-            # compute the net forces
+            # Compute the net forces
             F   = forces(m, r)
             
             Fm  = F / m[:, np.newaxis]
@@ -207,16 +213,16 @@ def plot_planet_positions(x, y, colors, text,
                           xmin=-2, xmax=2, ymin=-2, ymax=2, 
                           fgsize=(5,5), ftsize=16):
     
-    # set size of figure
+    # Set size of figure
     fig = plt.figure(figsize=fgsize)
 
-    # create area for a single plot 
+    # Create area for a single plot 
     nrows, ncols, index = 1, 1, 1
     ax  = plt.subplot(nrows, ncols, index)
 
     ax.set_title(title, pad=14)
     
-    # place axes at the center of the plot
+    # Place axes at the center of the plot
     nxticks = nyticks = 9
     xlabel  = '$x$ (au)'
     ylabel  = '$y$ (au)'

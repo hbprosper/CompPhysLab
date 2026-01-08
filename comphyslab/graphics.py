@@ -16,7 +16,7 @@ mp.rc('text', usetex=True)
 
 # use JavaScript for rendering animations
 mp.rc('animation', html='jshtml')
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def plot_central_axes(ax, 
                       xmin, xmax, nxticks, xlabel,
                       ymin, ymax, nyticks, ylabel, 

@@ -1,0 +1,26 @@
+[project]
+name = "comphyslab"
+version = "0.1.0"
+description = "A module for the introductory Computational Physics Laboratory course at Florida State University."
+readme = "README.md"
+authors = [
+  { name="Harrison B. Prosper", email="hprosper@fsu.edu" }
+]
+license = { text = "MIT" }
+dependencies = [
+  # e.g. "numpy>=1.20", "requests"
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[project.scripts]
+#command = "comphyslib.bin.<script>:main"
+
+[project.urls]
+"Homepage" = "https://github.com/hbprosper/CompPhysLab"

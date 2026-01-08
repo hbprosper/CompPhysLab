@@ -7,7 +7,7 @@ import numpy as np
 # ----------------------------------------------------------------------
 # The following functions can operate on an array of vectors
 # ----------------------------------------------------------------------
-# compute magnitudes of one or more vectors
+# Compute magnitudes of one or more vectors
 def magnitude(v):
     '''
     Compute magnitude of a vector (modeled as numpy array) or an numpy
@@ -15,7 +15,7 @@ def magnitude(v):
     '''
     return np.sqrt(np.sum(v*v, axis=-1))
 
-# compute unit vectors from one or more vectors
+# Compute unit vectors from one or more vectors
 def norm(v):
     '''
     Compute the normalized vectors, that is, unit vectors given one or
@@ -32,8 +32,8 @@ def norm(v):
 def dot(a, b):
     '''
     
-    Compute the dot product of vectors a and b or an array of vectors a and b, where
-    the vectors are modeled as numpy arrays.
+    Compute the dot product of vectors a and b or an array of vectors 
+    a and b, where the vectors are modeled as numpy arrays.
     
     Arguments
     ---------
@@ -60,18 +60,20 @@ def dot(a, b):
 
 def tangent(u, n):
     '''
-    Given the incident unit vector u and normal unit vector n, return the unit 
-    vector n x u x n / |u x n| that is at right angles to n and which lies 
-    in the plane defined by u and n.
+    Given the incident unit vector u and normal unit vector n, return 
+    the unit vector n x u x n / |u x n| that is at right angles to n 
+    and which lies in the plane defined by u and n.
     
     Arguments
     ---------
-    u:    unit vector in direction of incident a ray (or an numpy array of unit vectors)
+    u:    unit vector in direction of incident a ray (or an numpy array 
+	  of unit vectors)
     n:    unit normal to boundary (or an numpy array of unit normals)
     
     Return
     ------
-    nt:   unit vector in direction of tangent to normal (or a numpy array thereof)
+    nt:   unit vector in direction of tangent to normal (or a numpy 
+	  array thereof)
     
     Example
     -------
@@ -84,18 +86,20 @@ def tangent(u, n):
 def reflection(u, n):
     '''
     
-    Given the incident unit vector u, normal unit vector n that defines the orientation
-    of the boundary between two media, return the unit vector in the direction of
-    the reflected ray  
+    Given the incident unit vector u, normal unit vector n that defines 
+    the orientation of the boundary between two media, return the unit 
+    vector in the direction of the reflected ray.  
     
     Arguments
     ---------
-    u:    unit vector in direction of incident a ray (or an numpy array of unit vectors)
-    n:    unit normal to boundary (or an numpy array of unit normals)
+    u:    Unit vector in direction of incident a ray (or an numpy array 
+	  of unit vectors)
+    n:    Unit normal to boundary (or an numpy array of unit normals)
     
     Return
     ------
-    ur:   unit vector in direction of reflected ray (or a numpy array thereof)
+    ur:   Unit vector in direction of reflected ray (or a numpy array 
+	  thereof)
     
     Example
     -------
@@ -112,20 +116,24 @@ def reflection(u, n):
 
 def transmission(u, n, n1, n2):
     '''
-    Given the incident unit vector u, normal unit vector n that defines the orientation
-    of the boundary between two media of refractive indices n1 and n2, 
-    return the unit vector in the direction of the transmitted ray.  
+    Given the incident unit vector u, normal unit vector n that defines 
+    the orientation of the boundary between two media of refractive 
+    indices n1 and n2, return the unit vector in the direction of the 
+    transmitted ray.  
     
     Arguments
     ---------
-    u:    unit vector in direction of incident ray (or an numpy array of unit vectors)
+    u:    unit vector in direction of incident ray (or an numpy array of 
+	  unit vectors)
     n:    unit normal to boundary (or an numpy array of unit normals)
     n1:   refractive index of medium traversed by incident ray
-    n2:   refractive index of medium traversed by transmitted (i.e., refracted) ray
+    n2:   refractive index of medium traversed by transmitted (i.e., 
+          refracted) ray
     
     Return
     ------
-    ut:   unit vector in direction of transmitted ray (or a numpy array thereof)
+    ut:   unit vector in direction of transmitted ray (or a numpy array 
+	  thereof)
     
     Example
     -------
